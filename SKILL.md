@@ -21,7 +21,8 @@ description: 公開專案的作者推廣三件套(GitHub/Facebook/BMC)標準與 
 `snippet.template.html` 是自包含 inline script,貼進 `</body>` 前即可:
 
 - 找到頁上的 `a[href*="buymeacoffee.com/yazelin"]`(React 等晚渲染會重試 30 秒)。
-- 不定時(首次 12–25 秒,之後 45–90 秒)讓 BMC icon 原地彈跳一下,同時彈出可愛小對話泡(求抖內語句,4 秒後淡出)。
+- 不定時(首次 18–30 秒,之後 90–180 秒)讓 BMC icon 原地彈跳一下,同時彈出可愛小對話泡(求抖內語句,4 秒後淡出)。
+- 每次頁面載入最多出現 3 次就安靜,寧可少不可煩。
 - 低調原則:泡泡 `pointer-events:none` 不擋點擊、分頁在背景時不動、`prefers-reduced-motion` 時整組停用。
 - 文案規則:正體中文、全形標點、不用 emoji。
 

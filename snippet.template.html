@@ -27,7 +27,8 @@ n.innerHTML='<a href="'+GH+'" target="_blank" rel="noopener" aria-label="GitHub 
 '<a href="https://buymeacoffee.com/yazelin" target="_blank" rel="noopener" aria-label="請作者喝杯咖啡 Buy me a coffee" title="請作者喝杯咖啡 Buy me a coffee">'+ICONS.bmc+'</a>';
 document.body.appendChild(n)}
 function hop(){anchor.classList.remove("yz-hop");void anchor.offsetWidth;anchor.classList.add("yz-hop")}
-function say(){if(document.hidden)return;var r=anchor.getBoundingClientRect();if(!r.width&&!r.height)return;
+var shown=0,MAX_SHOWS=3;
+function say(){if(document.hidden)return;var r=anchor.getBoundingClientRect();if(!r.width&&!r.height)return;shown++;
 bubble.textContent=LINES[Math.floor(Math.random()*LINES.length)];
 bubble.classList.remove("yz-on","yz-above","yz-below");
 bubble.style.left="0px";bubble.style.top="0px";
@@ -45,7 +46,7 @@ function start(){addCss();inject();anchor=findAnchor();if(!anchor)return false;
 try{if(getComputedStyle(anchor).display==="inline")anchor.style.display="inline-block"}catch(e){}
 bubble=document.createElement("div");bubble.className="yz-bubble";bubble.setAttribute("aria-hidden","true");document.body.appendChild(bubble);
 window.__yzPromo=say;
-(function loop(first){setTimeout(function(){say();loop(false)},first?12e3+Math.random()*13e3:45e3+Math.random()*45e3)})(true);
+(function loop(first){if(shown>=MAX_SHOWS)return;setTimeout(function(){say();loop(false)},first?18e3+Math.random()*12e3:9e4+Math.random()*9e4)})(true);
 return true}
 function boot(){var tries=0;(function t(){if(start())return;if(++tries<20)setTimeout(t,1500)})()}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();
