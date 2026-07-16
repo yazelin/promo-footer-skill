@@ -3,7 +3,7 @@ name: promo-footer
 description: 公開專案的作者推廣三件套(GitHub/Facebook/BMC)標準與 BMC 注意力效果(不定時彈跳+可愛對話泡)。當要幫 yazelin 的公開網頁專案加推廣 footer、檢查三件套、或幫 BMC 按鈕加吸睛效果時使用。
 ---
 
-# promo-footer:三件套 + BMC 注意力效果
+# promo-footer:三件套(+部落格=四件套)+ BMC 注意力效果
 
 任何**對外/公開**的網頁專案(遊戲、行銷頁、工具……)shipping 前,front-end 一定要有作者推廣三件套,這是固定 checklist 項,不是可選:
 
@@ -25,14 +25,15 @@ description: 公開專案的作者推廣三件套(GitHub/Facebook/BMC)標準與 
 - 每次頁面載入最多出現 3 次就安靜,寧可少不可煩。
 - 低調原則:泡泡 `pointer-events:none` 不擋點擊、分頁在背景時不動、`prefers-reduced-motion` 時整組停用。
 - 文案規則:正體中文、全形標點、不用 emoji。
+- **v2 自動補部落格連結**:頁上沒有連回 `https://yazelin.github.io/` 根站的連結時,會 clone BMC 按鈕補一顆「亞澤的部落格」(icon 站補 globe icon、文字站補「部落格」二字、注入版多第四顆圓鈕),把作品站流量導回主站訂閱漏斗;blog 本站用 `--no-blog` 關掉。
 
 ## 套用
 
 ```bash
-python3 apply.py <path/to/index.html> <repo名> [--inject]
+python3 apply.py <path/to/index.html> <repo名> [--inject] [--no-blog]
 ```
 
-冪等(重跑會 skip)。套用後檢查:該站若是離線 PWA(有 sw.js 全量 precache),要一併 bump service worker 的 cache 版本,不然舊快取蓋住新 index.html。
+冪等(同版重跑會 skip,偵測到舊版會就地升級)。套用後檢查:該站若是離線 PWA(有 sw.js 全量 precache),要一併 bump service worker 的 cache 版本,不然舊快取蓋住新 index.html。
 
 ## 驗證
 
