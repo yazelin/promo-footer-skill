@@ -35,6 +35,14 @@ python3 apply.py <path/to/index.html> <repo名> [--inject] [--no-blog]
 
 冪等(同版重跑會 skip,偵測到舊版會就地升級)。套用後檢查:該站若是離線 PWA(有 sw.js 全量 precache),要一併 bump service worker 的 cache 版本,不然舊快取蓋住新 index.html。
 
+## 全站升級(模板改版後鋪到所有站)
+
+```bash
+bash upgrade-all.sh   # 預設掃 $HOME 全部 repo
+```
+
+目標清單**一律用掃描產生**(grep `yz-promo-footer` 標記、照各檔既有 REPO/INJECT/ADDBLOG 參數重套),不要人工列清單——v1/v2 時代靠人列,bye-bg 被漏了兩波。升級後仍要逐 repo commit/push(只 stage 動到的檔案),離線 PWA 記得 bump SW 快取版本;main 有保護的 repo(mori-desktop、mori-meeting-recorder)走短命 branch + PR auto-merge。
+
 ## 驗證
 
 開頁面後在 console 跑 `window.__yzPromo()` 立刻觸發一次彈跳+對話泡,截圖確認位置與樣式。
