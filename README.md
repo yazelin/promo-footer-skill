@@ -9,6 +9,7 @@
 | `SKILL.md` | skill 本體:三件套規則 + 效果標準 + 套用/驗證流程 |
 | `snippet.template.html` | 自包含 inline snippet(效果 + 可選右下角三連結注入) |
 | `apply.py` | 冪等套用腳本:`python3 apply.py <html> <repo> [--inject]` |
+| `upgrade-all.sh` | 模板改版後的全站升級:掃描所有 repo 的 snippet 標記、照各檔既有參數重套(清單不靠人列) |
 
 ## 安裝(換機兩行)
 
