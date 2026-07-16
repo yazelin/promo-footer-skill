@@ -20,12 +20,12 @@ description: 公開專案的作者推廣三件套(GitHub/Facebook/BMC)標準與 
 
 `snippet.template.html` 是自包含 inline script,貼進 `</body>` 前即可:
 
-- 找到頁上的 `a[href*="buymeacoffee.com/yazelin"]`(React 等晚渲染會重試 30 秒)。
-- 不定時(首次 18–30 秒,之後 90–180 秒)讓 BMC icon 原地彈跳一下,同時彈出可愛小對話泡(求抖內語句,4 秒後淡出)。
+- 找到頁上的 BMC 連結:**可見者優先、footer/nav 內優先**,否則取最後一個(避免抓到內文段落裡的贊助連結);React 等晚渲染會重試 30 秒。
+- BMC icon **常駐原地輕跳**(2.6 秒一輪的小彈跳,一直跳);不定時(首次 18–30 秒,之後 90–180 秒)大跳一下並彈出可愛小對話泡(求抖內語句,4 秒後淡出)。
 - 每次頁面載入最多出現 3 次就安靜,寧可少不可煩。
-- 低調原則:泡泡 `pointer-events:none` 不擋點擊、分頁在背景時不動、`prefers-reduced-motion` 時整組停用。
+- 低調原則:泡泡 `pointer-events:none` 不擋點擊、分頁在背景或錨點不在可視範圍時不講話、`prefers-reduced-motion` 時整組停用。
 - 文案規則:正體中文、全形標點、不用 emoji。
-- **v2 自動補部落格連結**:頁上沒有連回 `https://yazelin.github.io/` 根站的連結時,會 clone BMC 按鈕補一顆「亞澤的部落格」(icon 站補 globe icon、文字站補「部落格」二字、注入版多第四顆圓鈕),把作品站流量導回主站訂閱漏斗;blog 本站用 `--no-blog` 關掉。
+- **v2 自動補部落格連結**:頁上沒有連回 `https://yazelin.github.io/` 根站的連結時,會 clone BMC 按鈕補一顆「亞澤的部落格」(icon 站補 globe icon、文字站補「部落格」二字、注入版多第四顆圓鈕;只在 footer/nav 情境加,不會插進內文句子),把作品站流量導回主站訂閱漏斗;blog 本站用 `--no-blog` 關掉。
 
 ## 套用
 
