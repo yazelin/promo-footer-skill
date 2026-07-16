@@ -10,7 +10,7 @@ import re
 import sys
 import pathlib
 
-VERSION = 4
+VERSION = 5
 tpl = (pathlib.Path(__file__).parent / "snippet.template.html").read_text()
 p = pathlib.Path(sys.argv[1])
 repo = sys.argv[2]
