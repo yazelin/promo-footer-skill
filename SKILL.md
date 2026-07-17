@@ -1,6 +1,6 @@
 ---
 name: promo-footer
-description: 公開專案的作者推廣三件套(GitHub/Facebook/BMC)標準與 BMC 注意力效果(不定時彈跳+可愛對話泡)。當要幫 yazelin 的公開網頁專案加推廣 footer、檢查三件套、或幫 BMC 按鈕加吸睛效果時使用。
+description: 公開專案的作者推廣三件套(GitHub/Facebook/BMC)標準與 BMC 注意力效果(不定時彈跳+可愛對話泡)。觸發時機:幫 yazelin 的公開網頁專案加推廣 footer、檢查三件套、幫 BMC 按鈕加吸睛效果;或要「改對話泡台詞/BMC 文案/footer 模板」並「更新所有站/全站升級/捲版到全部公開 repo」時——改模板後一律走 upgrade-all.sh+push-all.sh 捲版,不要只改單站。
 ---
 
 # promo-footer:三件套(+部落格=四件套)+ BMC 注意力效果
