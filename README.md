@@ -10,6 +10,7 @@
 | `snippet.template.html` | 自包含 inline snippet(效果 + 可選右下角三連結注入) |
 | `apply.py` | 冪等套用腳本:`python3 apply.py <html> <repo> [--inject]` |
 | `upgrade-all.sh` | 模板改版後的全站升級:掃描所有 repo 的 snippet 標記、照各檔既有參數重套(清單不靠人列) |
+| `push-all.sh` | 升級後的 commit+push:只 stage 相關檔;protected branch 自動開 PR(auto-merge)、archived 自動解封存→推→封回(agent 跑會被權限層擋,人跑全自動) |
 
 ## 安裝(換機兩行)
 
