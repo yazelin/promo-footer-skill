@@ -27,6 +27,12 @@ grep -rl --include='*.html' "yz-promo-footer v" "$ROOT" \
   [ -z "$files" ] && [ "$ahead" -eq 0 ] && continue
   br=$(git symbolic-ref --short HEAD 2>/dev/null)
   if [ "$br" != "main" ] && [ "$br" != "master" ]; then echo "FLAG(非預設分支 $br): $repo"; continue; fi
+  # 本地落後遠端(常見:protected repo 的 PR 已在遠端合掉)→ 直接 commit 會 non-ff 卡死。
+  # 處理法固定:reset --hard origin/<br> 後重跑 upgrade-all.sh 再跑本腳本。
+  git fetch -q 2>/dev/null
+  if [ "$(git rev-list --count "HEAD..origin/$br" 2>/dev/null || echo 0)" -gt 0 ]; then
+    echo "FLAG(本地落後 origin/$br,先 reset --hard origin/$br 再重跑 upgrade-all + push-all): $repo"; continue
+  fi
   if [ -n "$files" ]; then
     git add $files || continue
     git commit -qm "$MSG
