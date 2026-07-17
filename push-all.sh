@@ -46,9 +46,19 @@ $TRAILER" || continue
     # 它自己的權限層擋住 → fallback 標記人工。yazelin 自己跑本腳本則全自動。
     slug=$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null)
     if [ -n "$slug" ] && gh repo unarchive "$slug" --yes 2>/dev/null; then
-      git push -q && gh repo archive "$slug" --yes \
-        && echo "pushed(解封存→推→封回): $(basename "$repo")" \
-        || echo "FLAG(解封存了但推/封回失敗,手查): $repo"
+      # 封回前必等 Pages build 完成——archived repo 不跑 build,推完馬上封=白推
+      if git push -q; then
+        gh api "repos/$slug/pages/builds" -X POST >/dev/null 2>&1
+        for i in $(seq 1 30); do
+          st=$(gh api "repos/$slug/pages/builds/latest" -q .status 2>/dev/null)
+          [ "$st" = "built" ] && break
+          [ "$st" = "errored" ] && { echo "FLAG(Pages build 失敗): $repo"; break; }
+          sleep 5
+        done
+        gh repo archive "$slug" --yes && echo "pushed(解封存→推→等build($st)→封回): $(basename "$repo")"
+      else
+        gh repo archive "$slug" --yes; echo "FLAG(解封存了但推失敗,已封回): $repo"
+      fi
     else
       echo "FLAG(archived/403,commit 留在本地,跑一次本腳本或手動解封存): $repo"
     fi
