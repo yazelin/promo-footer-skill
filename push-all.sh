@@ -23,13 +23,16 @@ grep -rl --include='*.html' "yz-promo-footer v" "$ROOT" \
       sw.js|*/sw.js) grep -qE 'CACHE.*-v[0-9]+' "$path" 2>/dev/null && files="$files $path";;
     esac
   done < <(git status --porcelain | grep '^ M ')
-  [ -z "$files" ] && continue
+  ahead=$(git rev-list --count '@{u}..HEAD' 2>/dev/null || echo 0)
+  [ -z "$files" ] && [ "$ahead" -eq 0 ] && continue
   br=$(git symbolic-ref --short HEAD 2>/dev/null)
   if [ "$br" != "main" ] && [ "$br" != "master" ]; then echo "FLAG(非預設分支 $br): $repo"; continue; fi
-  git add $files || continue
-  git commit -qm "$MSG
+  if [ -n "$files" ]; then
+    git add $files || continue
+    git commit -qm "$MSG
 
 $TRAILER" || continue
+  fi
   err=$(git push 2>&1) && { echo "pushed: $(basename "$repo")"; continue; }
   if echo "$err" | grep -qi "protected"; then
     nb="feat/promo-footer-v$VER"
