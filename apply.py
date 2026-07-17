@@ -10,7 +10,13 @@ import re
 import sys
 import pathlib
 
-VERSION = 7
+VERSION = 8
+
+# per-site 對話泡加碼句(重套不會丟;句子跟站的功能綁定,別放通用句)
+EXTRA_LINES = {
+    "line-chat-maker": ["免費 AI 是真的在刷亞澤的信用卡，喝杯咖啡幫他回血"],
+}
+
 tpl = (pathlib.Path(__file__).parent / "snippet.template.html").read_text()
 p = pathlib.Path(sys.argv[1])
 repo = sys.argv[2]
@@ -19,7 +25,8 @@ addblog = "--no-blog" not in sys.argv
 s = p.read_text()
 snip = (tpl.replace("__REPO__", repo)
            .replace("__INJECT__", "true" if inject else "false")
-           .replace("__ADDBLOG__", "true" if addblog else "false"))
+           .replace("__ADDBLOG__", "true" if addblog else "false")
+           .replace("__EXTRALINES__", "".join(',"%s"' % l for l in EXTRA_LINES.get(repo, []))))
 
 m = re.search(r"[ \t]*<!-- yz-promo-footer v(\d+).*?</script>\n?", s, re.S)
 if m:
