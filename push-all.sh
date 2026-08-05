@@ -2,7 +2,7 @@
 # upgrade-all.sh 的下半場:把改完的檔案逐 repo commit+push。
 # push 被拒時分流:protected branch → 自動開 branch+PR(auto-merge);archived(403)→ 標記人工。
 # 用法: push-all.sh "<commit 訊息>" [掃描根目錄,預設 $HOME]
-# 只 stage「帶 yz-promo-footer 標記的 html」+「有 CACHE -vN 版號的 sw.js」,不掃到別的髒檔。
+# 只 stage「帶 yz-promo-footer 標記的 html」+「有快取 vN 版號的 sw.js」,不掃到別的髒檔。
 set -u
 MSG="${1:?用法: push-all.sh \"<commit 訊息>\" [root]}"
 ROOT="${2:-$HOME}"
@@ -20,7 +20,7 @@ grep -rl --include='*.html' "yz-promo-footer v" "$ROOT" \
   while read -r st path; do
     case "$path" in
       *.html) grep -q "yz-promo-footer" "$path" 2>/dev/null && files="$files $path";;
-      sw.js|*/sw.js) grep -qE 'CACHE.*-v[0-9]+' "$path" 2>/dev/null && files="$files $path";;
+      sw.js|*/sw.js) grep -qE '(CACHE|SHELL|ASSET|VERSION).*v[0-9]+' "$path" 2>/dev/null && files="$files $path";;
     esac
   done < <(git -c core.quotePath=false status --porcelain | grep '^ M ')
   ahead=$(git rev-list --count '@{u}..HEAD' 2>/dev/null || echo 0)
