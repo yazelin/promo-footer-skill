@@ -17,7 +17,7 @@ EXTRA_LINES = {
     "line-chat-maker": ["免費 AI 是真的在刷亞澤的信用卡，喝杯咖啡幫他回血"],
 }
 
-tpl = (pathlib.Path(__file__).parent / "snippet.template.html").read_text()
+tpl = (pathlib.Path(__file__).parent / "snippet.template.html").read_text().rstrip("\n")
 p = pathlib.Path(sys.argv[1])
 repo = sys.argv[2]
 inject = "--inject" in sys.argv
