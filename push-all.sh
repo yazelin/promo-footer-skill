@@ -7,7 +7,7 @@ set -u
 MSG="${1:?用法: push-all.sh \"<commit 訊息>\" [root]}"
 ROOT="${2:-$HOME}"
 VER=$(grep -o 'yz-promo-footer v[0-9]*' "$(dirname "$0")/snippet.template.html" | grep -o '[0-9]*$')
-TRAILER="Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
+TRAILER="${YZ_PROMO_COAUTHOR:-}"
 
 grep -rl --include='*.html' "yz-promo-footer v" "$ROOT" \
   --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=dist --exclude-dir=build 2>/dev/null \
@@ -22,7 +22,7 @@ grep -rl --include='*.html' "yz-promo-footer v" "$ROOT" \
       *.html) grep -q "yz-promo-footer" "$path" 2>/dev/null && files="$files $path";;
       sw.js|*/sw.js) grep -qE 'CACHE.*-v[0-9]+' "$path" 2>/dev/null && files="$files $path";;
     esac
-  done < <(git status --porcelain | grep '^ M ')
+  done < <(git -c core.quotePath=false status --porcelain | grep '^ M ')
   ahead=$(git rev-list --count '@{u}..HEAD' 2>/dev/null || echo 0)
   [ -z "$files" ] && [ "$ahead" -eq 0 ] && continue
   br=$(git symbolic-ref --short HEAD 2>/dev/null)
@@ -35,9 +35,11 @@ grep -rl --include='*.html' "yz-promo-footer v" "$ROOT" \
   fi
   if [ -n "$files" ]; then
     git add $files || continue
-    git commit -qm "$MSG
-
-$TRAILER" || continue
+    if [ -n "$TRAILER" ]; then
+      git commit -qm "$MSG" -m "$TRAILER" || continue
+    else
+      git commit -qm "$MSG" || continue
+    fi
   fi
   err=$(git push 2>&1) && { echo "pushed: $(basename "$repo")"; continue; }
   if echo "$err" | grep -qi "protected"; then
