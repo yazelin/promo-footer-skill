@@ -10,7 +10,7 @@ import re
 import sys
 import pathlib
 
-VERSION = 9
+VERSION = 10
 
 # per-site 對話泡加碼句(重套不會丟;句子跟站的功能綁定,別放通用句)
 EXTRA_LINES = {
@@ -26,7 +26,10 @@ s = p.read_text()
 snip = (tpl.replace("__REPO__", repo)
            .replace("__INJECT__", "true" if inject else "false")
            .replace("__ADDBLOG__", "true" if addblog else "false")
-           .replace("__EXTRALINES__", "".join(',"%s"' % l for l in EXTRA_LINES.get(repo, []))))
+           .replace("__EXTRALINES__", "".join(',"%s"' % l for l in EXTRA_LINES.get(repo, [])))
+           # 版號只有 VERSION 一個來源。以前模板的註解要人工同步,漏改過一次:
+           # apply.py 說 v10、寫進檔案的註解還是 v9,於是每次捲版都重寫全部檔案卻永遠升不上去。
+           .replace("__VERSION__", str(VERSION)))
 
 m = re.search(r"[ \t]*<!-- yz-promo-footer v(\d+).*?</script>\n?", s, re.S)
 if m:

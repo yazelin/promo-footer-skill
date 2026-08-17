@@ -1,0 +1,6 @@
+# 捲版要跳過的路徑。一行一個「路徑片段 tab 原因」,upgrade-all.sh 會拿它比對絕對路徑。
+# 為什麼要有這份:掃描靠 grep 產生(不靠人列清單),所以每次都會掃到這些站,
+# 然後每次都白改一輪、推不上去或改壞。理由寫清楚,才不會有人好心把它們「修好」。
+/red-cliffs-3d/	GitHub repo 已封存(唯讀)。要更新得先解除封存→推→再封回,不值得每次捲版都做一次
+/taigi-caption/	CSP 禁 inline script,用純 CSS 等效實作(標記是 v9-csp)。apply.py 會注入 inline script,被擋掉
+/.claude/	Claude Code 的工作暫存檔,不是專案
