@@ -53,16 +53,46 @@ done
 say "掃到 ${#all[@]} 個檔案：可自動升級 ${#targets[@]}、跳過清單 ${#skipped[@]}、沒有版號的變體 ${#variants[@]}"
 for v in "${variants[@]}"; do say "  變體（掃描抓不到版號，要人工同步）: $v"; done
 
-if [ "$VERIFY_ONLY" = "1" ]; then
-  say ""; say "只驗同步："
-  bad=0
+# 驗收要分三層:推出去了 ≠ 合進 main ≠ 本地跟上。
+# 2026-08-18 踩到:mori-meeting-recorder 的 PR 早就合了,但本地 main 沒拉,
+# 而且本地還卡著一個推不上去的舊 commit(遠端已有 squash 版),git pull 會直接失敗。
+# 只驗「有沒有推出去」的話,這三種都看不出來。
+verify() {
+  local bad=0 seen=""
   for f in "${targets[@]}"; do
-    r=$(git -C "$(dirname "$f")" rev-parse --show-toplevel 2>/dev/null) || continue
-    n=$(git -C "$r" rev-list @{u}..HEAD --count 2>/dev/null || echo 0)   # 用數字,不看語系(坑 5)
-    [ "$n" -gt 0 ] && { say "  未推 $n 個 commit: $r"; bad=1; }
+    local r; r=$(git -C "$(dirname "$f")" rev-parse --show-toplevel 2>/dev/null) || continue
+    case " $seen " in *" $r "*) continue ;; esac
+    seen="$seen $r"
+    local name; name=$(basename "$r")
+    git -C "$r" fetch -q origin 2>/dev/null
+    local ahead behind
+    ahead=$(git -C "$r" rev-list '@{u}..HEAD' --count 2>/dev/null || echo 0)   # 用數字,不看語系(坑 5)
+    behind=$(git -C "$r" rev-list 'HEAD..@{u}' --count 2>/dev/null || echo 0)
+    local ver; ver=$(grep -o 'yz-promo-footer v[0-9]*' "$f" | head -1 | grep -oE '[0-9]+')
+    local msg=""
+    # 只管「捲版相關」的未推 commit。repo 裡有別的未推工作是人家的事,
+    # 這支工具去報那個只會製造雜訊(2026-08-18:小說 repo 的 9 個創作 commit 被誤報成問題)。
+    if [ "$ahead" -gt 0 ] && git -C "$r" log '@{u}..HEAD' --format=%H -- "${f#$r/}" | grep -q .; then
+      msg="$msg  捲版的 commit 沒推出去（$ahead 個未推）"
+    fi
+    [ "$behind" -gt 0 ] && [ "${ver:-0}" -lt "$VERSION" ] && msg="$msg  本地落後 $behind 個（要 git pull）"
+    [ "${ver:-0}" -lt "$VERSION" ] && msg="$msg  檔案還是 v$ver"
+    # 有開著的捲版 PR 就把狀態講出來(推出去 ≠ 合進 main)
+    local pr; pr=$(gh pr view "promo-footer-v$VERSION" --repo "yazelin/$name" \
+      --json state,mergeStateStatus --jq '"\(.state)/\(.mergeStateStatus)"' 2>/dev/null)
+    case "$pr" in
+      OPEN/*) msg="$msg  PR 還沒合（$pr）" ;;
+      MERGED/*) [ "${ver:-0}" -lt "$VERSION" ] && msg="$msg  PR 已合，本地沒同步" ;;
+    esac
+    [ -n "$msg" ] && { say "  $name:$msg"; bad=1; }
   done
-  [ "$bad" = "0" ] && say "  全部已推。"
-  exit 0
+  [ "$bad" = "0" ] && say "  ${#targets[@]} 個檔案、全部 repo 都同步到 v$VERSION 了。"
+  return $bad
+}
+
+if [ "$VERIFY_ONLY" = "1" ]; then
+  say ""; say "驗收（推出去了 ≠ 合進 main ≠ 本地跟上）："
+  verify; exit $?
 fi
 
 # ── 2. 套用 ──
@@ -142,11 +172,6 @@ done
 # ── 4. 收尾:記版號鎖、驗每個 repo 都推上去了(坑 5) ──
 if [ "$DRY" = "0" ]; then
   printf '%s\t%s\n' "$VERSION" "$tplhash" > "$LOCK"
-  say ""; say "驗同步："
-  bad=0
-  for r in "${repos[@]}"; do
-    n=$(git -C "$r" rev-list @{u}..HEAD --count 2>/dev/null || echo 0)
-    [ "$n" -gt 0 ] && { say "  未推 $n 個: $r"; bad=1; }
-  done
-  [ "$bad" = "0" ] && say "  ${#repos[@]} 個 repo 全部已推。"
+  say ""; say "驗收（推出去了 ≠ 合進 main ≠ 本地跟上）："
+  verify || true
 fi
