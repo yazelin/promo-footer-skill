@@ -50,5 +50,6 @@ MIT © 林亞澤
 3. 7 個離線 PWA 的 service worker 快取沒 bump，舊快取蓋住新頁面
 4. 兩個 main 有保護的 repo 要走 branch + PR
 5. 用 `grep ahead` 驗同步，這台機器 git 講中文「領先 1」，永遠比對不到，回報了假的全綠
+6. 開 PR 的分支從**本地** main 起頭，但本地落後遠端一個 commit，PR 直接變 `DIRTY`、auto-merge 不會動，要人工 rebase 才發現。現在改成先 fetch、從 `origin/<base>` 開分支
 
 自包含（每個站各自完整、零外部相依、離線能用）是這個設計真正的優點，不該為了省事丟掉。該修的是工具太陽春。

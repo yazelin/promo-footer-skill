@@ -119,7 +119,14 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
     git diff --cached --quiet && { echo "  （沒有變更）"; exit 0; }
     if [ "$prot" = "1" ]; then
       br="promo-footer-v$VERSION"
-      git checkout -q -b "$br" 2>/dev/null || git checkout -q "$br"
+      # 分支要從「最新的 origin/main」開,不是從本地 main。
+      # 2026-08-18 踩到:本地 main 落後一個 commit,開出來的分支跟遠端衝突,
+      # PR 直接變 DIRTY、auto-merge 不會動,要人工 rebase 才發現。
+      base=$(git symbolic-ref --short HEAD)
+      git stash -q -u 2>/dev/null
+      git fetch -q origin "$base" 2>/dev/null
+      git checkout -q -B "$br" "origin/$base" 2>/dev/null || git checkout -q -b "$br" 2>/dev/null || git checkout -q "$br"
+      git stash pop -q 2>/dev/null
       git -c user.name=yazelin commit -q -m "$msg" \
         && git push -q -u origin "$br" 2>/dev/null \
         && gh pr create --fill --head "$br" >/dev/null 2>&1 \
