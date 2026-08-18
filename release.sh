@@ -86,7 +86,17 @@ verify() {
     esac
     [ -n "$msg" ] && { say "  $name:$msg"; bad=1; }
   done
-  [ "$bad" = "0" ] && say "  ${#targets[@]} 個檔案、全部 repo 都同步到 v$VERSION 了。"
+  if [ "$bad" = "0" ]; then
+    # 講準:這支只保證「捲版這件事」到位,不保證 repo 跟遠端完全同步。
+    # 別的未推 commit 是人家自己的工作,列成資訊,不當問題。
+    local other=""
+    for r in $seen; do
+      local n; n=$(git -C "$r" rev-list '@{u}..HEAD' --count 2>/dev/null || echo 0)
+      [ "$n" -gt 0 ] && other="$other $(basename "$r")($n)"
+    done
+    say "  ${#targets[@]} 個檔案的 promo-footer 都是 v$VERSION，捲版相關的 commit 也都推出去了。"
+    [ -n "$other" ] && say "  （這些 repo 另有未推的 commit，跟捲版無關，沒有動它們：$other）"
+  fi
   return $bad
 }
 
