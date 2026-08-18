@@ -35,13 +35,21 @@ python3 apply.py <path/to/index.html> <repo名> [--inject] [--no-blog]
 
 冪等(同版重跑會 skip,偵測到舊版會就地升級)。套用後檢查:該站若是離線 PWA(有 sw.js 全量 precache),要一併 bump service worker 的 cache 版本,不然舊快取蓋住新 index.html。
 
-## 全站升級(模板改版後鋪到所有站)
+## 全站捲版:一個指令
 
 ```bash
-bash upgrade-all.sh   # 預設掃 $HOME 全部 repo
+./release.sh --dry     # 先看要做什麼
+./release.sh           # 真的跑
+./release.sh --verify-only   # 只檢查線上有沒有跟上
 ```
 
-目標清單**一律用掃描產生**(grep `yz-promo-footer` 標記、照各檔既有 REPO/INJECT/ADDBLOG 參數重套),不要人工列清單——v1/v2 時代靠人列,bye-bg 被漏了兩波。升級後仍要逐 repo commit/push(只 stage 動到的檔案),離線 PWA 記得 bump SW 快取版本;main 有保護的 repo(mori-desktop、mori-meeting-recorder)走短命 branch + PR auto-merge。
+改完 `snippet.template.html` 之後**要把 apply.py 的 VERSION 捲一號**,不捲的話 apply.py 會判定「已是同版」把全部站 skip。release.sh 會用 `.version-lock` 比對樣板雜湊,忘了捲就直接擋下來。
+
+release.sh 一次做完:掃描(抓 `yz-promo-footer`,不要求後面有版號)→ 套用 → 離線 PWA 自動 bump service worker 快取版號 → 只 stage 動到的檔 → commit → push(main 有保護的自動走 branch + PR auto-merge)→ 逐 repo 驗有沒有推出去。
+
+**沒有版號的變體會被列出來但不自動改**(有人手改過、拿掉版號,例如 ai-brain-site、glitch-music)。那些要人工同步文案,並記進 `skip.txt`。
+
+舊的 `upgrade-all.sh` 只做「套用」那一段,留著給只想跑那一步的情況。
 
 ## 驗證
 

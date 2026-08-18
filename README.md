@@ -28,3 +28,27 @@ MIT © 林亞澤
 ---
 
 作者:[GitHub](https://github.com/yazelin)|[Facebook](https://www.facebook.com/yaze.lin.gm)|[Buy Me a Coffee](https://buymeacoffee.com/yazelin)
+
+## 全站捲版
+
+```bash
+./release.sh --dry           # 先看要做什麼
+./release.sh                 # 真的跑
+./release.sh --verify-only   # 只檢查有沒有推出去
+```
+
+改完 `snippet.template.html` 要捲 `apply.py` 的 `VERSION`。忘了捲的話 apply.py 會判定「已是同版」，全部站被 skip、跑了等於沒跑——release.sh 用 `.version-lock` 比對樣板雜湊，忘了捲直接擋下來。
+
+一個指令做完：掃描 → 套用 → 離線 PWA 自動 bump service worker 快取版號 → 只 stage 動到的檔 → commit → push（main 有保護的走 branch + PR auto-merge）→ 驗每個 repo 都推出去了。
+
+### 這五個坑寫進工具了
+
+2026-08-18 手動跑一次 96 檔、52 repo 的 sweep，踩到：
+
+1. 改了樣板忘了捲 VERSION，全部被 skip
+2. `ai-brain-site`、`glitch-music` 的標記被手改成沒有版號，掃描的 `grep "yz-promo-footer v"` 永遠看不到它們
+3. 7 個離線 PWA 的 service worker 快取沒 bump，舊快取蓋住新頁面
+4. 兩個 main 有保護的 repo 要走 branch + PR
+5. 用 `grep ahead` 驗同步，這台機器 git 講中文「領先 1」，永遠比對不到，回報了假的全綠
+
+自包含（每個站各自完整、零外部相依、離線能用）是這個設計真正的優點，不該為了省事丟掉。該修的是工具太陽春。

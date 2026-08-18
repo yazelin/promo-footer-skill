@@ -10,7 +10,7 @@ import re
 import sys
 import pathlib
 
-VERSION = 10
+VERSION = 11
 
 # per-site 對話泡加碼句(重套不會丟;句子跟站的功能綁定,別放通用句)
 EXTRA_LINES = {

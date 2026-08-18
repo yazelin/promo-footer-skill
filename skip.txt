@@ -4,3 +4,5 @@
 /red-cliffs-3d/	GitHub repo 已封存(唯讀)。要更新得先解除封存→推→再封回,不值得每次捲版都做一次
 /taigi-caption/	CSP 禁 inline script,用純 CSS 等效實作(標記是 v9-csp)。apply.py 會注入 inline script,被擋掉
 /.claude/	Claude Code 的工作暫存檔,不是專案
+/ai-brain-site/	手改過的精簡版(標記是 yz-promo-footer (trimmed)、沒有版號),掃描的 grep "yz-promo-footer v" 看不到它。捲版時文案要手動同步,別直接重套(會把精簡掉的東西加回來)
+/glitch-music/	同 ai-brain-site:手改過的精簡版(標記 yz-promo-footer (trimmed)、沒版號)。捲版時文案要人工同步,別直接重套
