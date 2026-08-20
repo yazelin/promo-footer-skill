@@ -6,3 +6,5 @@
 /.claude/	Claude Code 的工作暫存檔,不是專案
 /ai-brain-site/	手改過的精簡版(標記是 yz-promo-footer (trimmed)、沒有版號),掃描的 grep "yz-promo-footer v" 看不到它。捲版時文案要手動同步,別直接重套(會把精簡掉的東西加回來)
 /glitch-music/	同 ai-brain-site:手改過的精簡版(標記 yz-promo-footer (trimmed)、沒版號)。捲版時文案要人工同步,別直接重套
+/taiwan-people/costume.html	請族人挑錯用的請益頁,刻意不放 BMC 注意力效果(免費幫忙的頁面上求抖內觀感壞)。訪客計數 beacon 已拆成獨立 script 保留。footer 四連結在。別重套——重套會把抖內泡加回族人正在校對的頁面。已知取捨:從這頁點去 population.html 或首頁仍有注意力效果,拍板前先不擴大
+/taiwan-people/costume-refs.html	同 costume.html:請益頁,刻意不放注意力效果,beacon 與 footer 連結保留,別重套
